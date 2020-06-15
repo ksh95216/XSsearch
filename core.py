@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from requests import *
 from urllib.parse import *
 import re
+import time
 
 
 class XSsearch:
@@ -30,41 +31,20 @@ class XSsearch:
 
 	def check(self):
 
-		p0 = re.compile('(.*?_XS_.*?_XS_.*)')
-		p1 = re.compile('.*?_XS_(.*?)_XS_.*?')
-		p2 = re.compile('[\'"<>]')
+		p = re.compile('_XS_.*?([<>\'"]+).*_XS_')
 
 		for param in self.parameter:
 
 			url = set_param(self.url, param)		
 			html = get_html(url, self.cookies)
-			XS = p1.findall(html)
-			line = []
-			match_html = p0.findall(html)
+			
+			for match in p.finditer(html):
 
-			for match in p1.finditer(html):
+				line = html[0:match.start()].count("\n")
 
-				line.append(html[0:match.start()].count("\n"))
+				if len(match.group()) > 0:
 
-			idx = 0
-			for r in XS:
-	
-				print(param, r)
-				match = p2.findall(r)
-
-
-				if len(match) > 0:
-
-
-					try:
-						m_html = match_html[idx]
-
-					except:
-
-						m_html = r
-
-					self.result.append({param : match, "line": line[idx], "html": m_html})
-				idx += 1
+					self.result.append({param : match.group(), "line":line})
 
 	def run(self):
 		
@@ -94,12 +74,8 @@ def get_html(url, cookies):
 		
 		cookies = tmp_cookies
 		
-	try:
-		res = get(url,cookies=cookies)
+	res = get(url,cookies=cookies,timeout=1)
 
-	except:
-
-		print("requests error")
 
 	html = res.text
 	return html
