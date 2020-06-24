@@ -31,20 +31,32 @@ class XSsearch:
 
 	def check(self):
 
-		p = re.compile('_XS_.*?([<>\'"]+).*_XS_')
+		p = re.compile('(<[\x00-;=\x3f-\xff>]*?_XS_.*?_XS_[<\x00-;=\x3f-\xff]*?>)')
 
 		for param in self.parameter:
 
 			url = set_param(self.url, param)		
 			html = get_html(url, self.cookies)
+			matchs = p.finditer(html)
 			
-			for match in p.finditer(html):
+			idx = 0
+			for match in matchs:
 
 				line = html[0:match.start()].count("\n")
-
-				if len(match.group()) > 0:
+	
+				
+				if (match.group()[0] == '\'' or match.group()[0] == '"') and match.group()[0] in match.group():
+		
+					self.result.append({param : match.group()[1:], "line":line})
+				
+				else:
 
 					self.result.append({param : match.group(), "line":line})
+				
+
+				idx += 1
+
+			print("[*] {} => {}".format(param, idx))
 
 	def run(self):
 		
@@ -74,7 +86,7 @@ def get_html(url, cookies):
 		
 		cookies = tmp_cookies
 		
-	res = get(url,cookies=cookies,timeout=1)
+	res = get(url,cookies=cookies)
 
 
 	html = res.text
