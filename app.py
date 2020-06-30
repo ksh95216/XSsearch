@@ -196,6 +196,4 @@ def report():
 	return json.dumps({"success":"true", "msg":"Report Success"})
 
 
-crt ="/etc/letsencrypt/live/test.nga.observer-0001/cert.pem"
-key = "/etc/letsencrypt/live/test.nga.observer-0001/privkey.pem"
-app.run('0.0.0.0',443,ssl_context=(crt,key))
+app.run('0.0.0.0',8080)
