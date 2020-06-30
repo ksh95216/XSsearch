@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+
+        <title> XSSearch </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
+        <script src="static/js/index.js"></script>
+        <script src="static/js/prism.js"></script>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="static/css/loader.css">
+        <link rel="stylesheet" href="static/css/search.css">
+	<link rel="stylesheet" href="static/css/modal.css">
+	<link rel="stylesheet" href="static/css/prism.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+ 	 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	
+	<style>
+       .wrap img{
+		width: 100%;
+		height: 100%;
+	}
+	</style>
+	<style>
+	/* Style the navigation bar */
+	.navbar {
+	  width: 100%;
+	  overflow: auto;
+	}
+	
+	/* Navbar links */
+	.navbar a {
+	  float: right;
+	  text-align: center;
+	  padding: 12px;
+	  color: #00B4CC;
+	  text-decoration: none;
+	  font-size: 17px;
+	}
+	
+	/* Navbar links on mouse-over */
+	.navbar a:hover {
+	  background-color: #dceef1;
+	}
+	
+	/* Current/active navbar link */
+	.active {
+	  background-color: #4CAF50;
+	}
+	
+	/* Add responsiveness - will automatically display the navbar vertically instead of horizontally on screens less than 500 pixels */
+	@media screen and (max-width: 500px) {
+	  .navbar a {
+	    float: none;
+	    display: block;
+	  }
+	}
+	</style>
+    </head>
+    <body>
+<!-- Load an icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	<div class="navbar"> 
+	  <a href="#" onclick="$('#Report_modal').modal('show');"><i class="fas fa-comment-dots"></i> Report</a>
+	  <a href="#Login" onclick="$('#Login_modal').modal('show')" id="login_out"><i class="fa fa-fw fa-user"></i> Login</a>
+	</div>
+
+	<div class="wrap">
+            <img src="static/images/xssearch.png" class="selector">
+	    <input type="checkbox" name="set_cookie" class="searchCheck" id="chk" onclick="cookie_box()" value="checked">Set cookie
+   	    <div class="search">
+	        <textarea name="cookie" class="cookieTerm display-none" placeholder="Set Your Cookie!" id="cookie"></textarea>
+   	    </div>
+   	    <div class="search">
+      	        <input type="text" name="url" class="searchTerm" id="url" placeholder="What are you looking for?" onkeyup="if(event.keyCode == 13){search()}">
+      	        <button type="submit" class="searchButton" onclick="search()">
+		    <i class="fa fa-bug"></i>
+    	        </button>
+   	    </div>
+	</div>
+
+        <div class="wrap-loading display-none">
+            
+            <div class="loader"></div>
+
+        </div>
+
+	<!-- result Modal -->
+		<div class="modal fade" id="Result_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">XSsearch Result!</h5>
+
+			  </div>
+			  <div class="Result_modal-body">
+				  
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				
+			  </div>
+			</div>
+		  </div>
+		</div>
+
+	<!-- login modal -->
+		<div class="modal fade" id="Login_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalTitle" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+			<div class="modal-content">
+			  <div class="Login_modal-body" style="text-align: center;">
+					<div class="card align-middle" style="width:40rem; border-radius:20px; display: inline-block;">
+
+						<div class="card-title" style="margin-top:30px;">
+							<h2 class="card-title text-center" style="color:#113366;">Login</h2>
+						</div>
+
+						<div class="card-body">
+							<h5 class="form-signin-heading">로그인 정보를 입력하세요</h5>
+							<label for="inputEmail" class="sr-only">Your ID</label>
+							<input type="text" id="Lusername" class="form-control" placeholder="Your ID" required autofocus><BR>
+							<label for="inputPassword" class="sr-only">Password</label>
+							<input type="password" id="Lpassword" class="form-control" placeholder="Password" onkeyup="if(event.keyCode == 13){login()}" required><br>
+							<div class="checkbox">
+							  <label>
+								<input type="checkbox" value="remember-me"> 기억하기
+							  </label>
+							</div>
+							<button id="Login" class="btn btn-lg btn-primary btn-block" type="submit" onclick="login()">로 그 인</button>
+							<a href="#register" onclick="$('#Login_modal').modal('hide');$('#Register_modal').modal('show')">register</a>
+						</div>
+
+					</div>
+				  <br>
+				  <br>
+				</div>
+			</div>
+		  </div>
+		</div>
+
+	<!-- register modal -->
+	<div class="modal fade" id="Register_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalTitle" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+			<div class="modal-content">
+			  <div class="Register_modal-body" style="text-align: center;">
+					<div class="card align-middle" style="width:40rem; border-radius:20px; display: inline-block;">
+
+						<div class="card-title" style="margin-top:30px;">
+							<h2 class="card-title text-center" style="color:#113366;">Register</h2>
+						</div>
+
+						<div class="card-body">
+							<h5 class="form-signin-heading">로그인 정보를 입력하세요</h5>
+							<label for="inputEmail" class="sr-only">Your ID</label>
+							<input type="text" id="Rusername" class="form-control" placeholder="Your ID" required autofocus><BR>
+							<label for="inputPassword" class="sr-only">Password</label>
+							<input type="password" id="Rpassword" class="form-control" placeholder="Password" onkeyup="if(event.keyCode == 13){Register()}" required><br>
+							<div class="checkbox">
+							  <label>
+								<input type="checkbox" value="remember-me"> 기억하기
+							  </label>
+							</div>
+							<button id="Login" class="btn btn-lg btn-primary btn-block" type="submit" onclick="Register()">회원가입</button>
+							<a href="#register" onclick="$('#Register_modal').modal('hide');$('#Login_modal').modal('show')" >Login</a>
+						</div>
+
+					</div>
+				  <br>
+				  <br>
+				</div>
+			</div>
+		  </div>
+	</div>
+	<script>$('#Report_modal').modal('show');</script>
+	<!-- report modal -->
+	<div class="modal fade" id="Report_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalTitle" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="Report_modal-body" style="text-align: center;">
+                                        <div class="card align-middle" style="width:50rem; border-radius:20px; display: inline-block;">
+
+                                                <div class="card-title" style="margin-top:30px;">
+                                                        <h2 class="card-title text-center" style="color:#113366;">Report</h2>
+                                                </div>
+
+                                                <div class="card-body">
+                                                        <h5 class="form-signin-heading">정상적으로 작동하지 않는 URL을 제보해주세요</h5>
+                                                        <label for="inputUrl" class="sr-only">Your ID</label>
+                                                        <input type="text" id="Rurl" class="form-control" placeholder="https://example.com" onkeyup="if(event.keyCode == 13){Report()}" required autofocus><BR>
+							<br>
+                                                        <button id="Login" class="btn btn-lg btn-primary btn-block" type="submit" onclick="Report()">제보하기</button>
+                                                </div>
+
+                                        </div>
+                                  <br>
+                                  <br>
+                                </div>
+                        </div>
+                  </div>
+        </div>
+
+    </body>
+</html>

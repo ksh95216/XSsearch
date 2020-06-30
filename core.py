@@ -37,33 +37,21 @@ class XSsearch:
 
 			url = set_param(self.url, param)		
 			html = get_html(url, self.cookies)
-			matchs = p.finditer(html)
 			
-			idx = 0
-			for match in matchs:
+			for match in p.finditer(html):
 
 				line = html[0:match.start()].count("\n")
-	
-				
-				if (match.group()[0] == '\'' or match.group()[0] == '"') and match.group()[0] in match.group():
-		
-					self.result.append({param : match.group()[1:], "line":line})
-				
-				else:
+
+				if len(match.group()) > 0:
 
 					self.result.append({param : match.group(), "line":line})
-				
-
-				idx += 1
-
-			print("[*] {} => {}".format(param, idx))
 
 	def run(self):
 		
 		self.parser()
-		print("[*] find parameters ",self.parameter)
+		#print("[*] find parameters ",self.parameter)
 		self.check()
-		print("[*] result ", self.result)
+		#print("[*] result ", self.result)
 		return self.result
 			
 
@@ -86,7 +74,7 @@ def get_html(url, cookies):
 		
 		cookies = tmp_cookies
 		
-	res = get(url,cookies=cookies)
+	res = get(url,cookies=cookies,timeout=10)
 
 
 	html = res.text
